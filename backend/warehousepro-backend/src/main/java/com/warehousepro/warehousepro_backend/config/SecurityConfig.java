@@ -17,7 +17,7 @@ public class SecurityConfig {
     /**
      * Configures the security filter chain.
      * - Disables CSRF protection.
-     * - Permits access to /api/auth/** without authentication.
+     * - Permits access to public endpoints (Swagger, auth, etc.).
      * - Secures all other endpoints.
      *
      * @param http HttpSecurity object to configure.
@@ -29,8 +29,20 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Disable CSRF protection
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll() // Allow access to /api/auth/**
-                        .anyRequest().authenticated() // Secure all other endpoints
+                        // Public endpoints
+                        .requestMatchers(
+                                "/api/auth/**",          // Authentication endpoints
+                                "/swagger-ui.html",      // Swagger UI
+                                "/v3/api-docs/**",       // Swagger API docs
+                                "/swagger-resources/**", // Swagger resources
+                                "/webjars/**",           // Swagger webjars
+                                "/",                     // Home page (if applicable)
+                                "/index.html",           // Home page (if applicable)
+                                "/static/**",            // Static resources (CSS, JS, etc.)
+                                "/favicon.ico"           // Favicon
+                        ).permitAll()
+                        // Secure all other endpoints
+                        .anyRequest().authenticated()
                 );
         return http.build();
     }
