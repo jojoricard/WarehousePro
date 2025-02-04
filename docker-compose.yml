@@ -4,7 +4,7 @@ services:
     image: postgres:13
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: yourpassword
+      POSTGRES_PASSWORD: password
       POSTGRES_DB: warehousepro
     ports:
       - "5432:5432"
@@ -12,7 +12,9 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   backend:
-    build: ./backend
+    build:
+      context: ./backend/warehousepro-backend  
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
     depends_on:
@@ -20,14 +22,17 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/warehousepro
       SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: yourpassword
+      SPRING_DATASOURCE_PASSWORD: password
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend/warehousepro-frontend
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
     volumes:
-      - ./frontend:/app
+      - ./frontend/warehousepro-frontend:/app
+      - /app/node_modules
     environment:
       CHOKIDAR_USEPOLLING: "true"
 
